@@ -16,7 +16,6 @@ extra-addons/
 > El contenido de estos archivos se encuentra al final de esta documentación.
 
 ---
-
 ### **1.2 Render**
 
 Para poder implementar Odoo en Render, será necesario:
@@ -24,7 +23,6 @@ Para poder implementar Odoo en Render, será necesario:
 - Iniciar sesión en la plataforma antes de proceder con la configuración del servicio.
 
 ---
-
 ## **2. Pasos en Render para Crear el Servicio de Odoo**
 
 ### **2.1 Crear Web Service en Render**
@@ -44,7 +42,6 @@ Si todo es correcto, Render mostrará un mensaje informando del **estado del des
 En caso contrario, se mostrarán mensajes de error indicando el motivo del fallo.
 
 ---
-
 ### **2.2 Crear la Base de Datos Postgres**
 
 De nuevo, en la parte superior derecha de Render, haremos clic en **"New"** y esta vez seleccionaremos la opción **"Postgres"**.
@@ -57,18 +54,57 @@ Después:
 Esto creará nuestra base de datos **PostgreSQL**, que será la que Odoo utilizará para almacenar toda la información del sistema.
 
 ---
+## **3. Conexión entre Odoo y la Base de Datos Postgres en Render**
+Una vez creados ambos servicios (el **Web Service** y la **Base de Datos Postgres**), debemos establecer la conexión entre ellos para que Odoo pueda acceder correctamente a la base de datos.
 
+---
+### **3.1 Obtener las credenciales de la Base de Datos**
 
+1. Accede a tu servicio de **Postgres** en Render.  
+2. Dirígete a la pestaña **"Connections"**.  
+3. Copia los siguientes datos que Render proporciona automáticamente:
+   - **Host**
+   - **Database**
+   - **User**
+   - **Password**
+   - **Internal Database URL** (opcional, solo de referencia)
 
+Guarda estos valores, ya que los necesitaremos para configurar las variables de entorno del servicio Odoo.
 
+---
+### **3.2 Configurar las Variables de Entorno en Odoo**
 
+1. Ve al servicio **Web Service (Odoo)** que creaste en Render.  
+2. En el panel lateral, selecciona la opción **"Environment"**.  
+3. Añade las siguientes variables con los valores obtenidos del servicio Postgres:
 
+| Nombre de la variable | Valor (ejemplo)                 | Descripción                                  |
+|------------------------|----------------------------------|----------------------------------------------|
+| `PGHOST`              | `oregon-postgres.render.com`     | Dirección del host de la base de datos       |
+| `PGPORT`              | `5432`                           | Puerto de conexión PostgreSQL (por defecto)  |
+| `PGUSER`              | `nombre_de_usuario`              | Usuario de la base de datos                  |
+| `PGPASSWORD`          | `contraseña_asignada`            | Contraseña de la base de datos               |
+| `PGDATABASE`          | `nombre_de_tu_bd`                | Nombre de la base de datos                   |
 
+4. Guarda los cambios y Render reiniciará el servicio automáticamente.
 
-## **3. Contenido de los Archivos del Proyecto**
+---
+### **3.3 Verificar la Conexión**
+Cuando el servicio Odoo se reinicie:
+- Si todo está configurado correctamente, en los **logs** (pestaña “Logs”) verás los mensajes:
+==> Checking/initializing DB <nombre_de_tu_bd>
+==> Starting Odoo server
+
+> 🔴 **Consejos:**  
+> Asegúrate de que tanto Odoo como Postgres estén en la misma región dentro de Render para evitar problemas de conexión o latencia.
+- Si hay algún error (por ejemplo, credenciales incorrectas o base de datos inaccesible), Render mostrará mensajes indicando el problema.
+
+---
+
+## **4. Contenido de los Archivos del Proyecto**
 A continuación se muestra el contenido de los archivos principales utilizados en la implementación del proyecto.
 
-### **3.1 Archivo `Dockerfile`**
+### **4.1 Archivo `Dockerfile`**
 ```
 # Imagen base Odoo 17
 FROM odoo:17
@@ -101,7 +137,7 @@ CMD ["bash","-lc", "\
        --db-filter=$PGDATABASE \
        --dev=all"]
 ```
-### **3.1 Archivo `__manifest__.py`**
+### **4.1 Archivo `__manifest__.py`**
 ```
 {
     "name": "Dummy Module",
