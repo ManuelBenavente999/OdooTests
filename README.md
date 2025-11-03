@@ -14,7 +14,7 @@ extra-addons/
 README.md
 ```
 
-> 🔴 **Nota:**  
+> 🔴 **Nota:** 🔴 
 > Los unicos archivos con contenido son: "Dockerfile" y "__manifest__.py", el resto no tienen contenido.
 > El contenido de estos archivos se encuentra al final de esta documentación.
 
@@ -23,7 +23,8 @@ README.md
 
 Para poder implementar Odoo en Render, será necesario:
 - Crear una cuenta en [Render](https://render.com/).
-- Iniciar sesión en la plataforma antes de proceder con la configuración del servicio.
+- Iniciar sesión en la plataforma con tu cuenta de **GitHub** o **GitLab** para vincular directamente tu repositorio, o bien introducir manualmente el enlace HTTPS del repositorio si se trata de uno externo.
+Render detectará automáticamente el repositorio y permitirá desplegar el proyecto desde él. antes de proceder con la configuración del servicio.
 
 ---
 ## **2. Pasos en Render para Crear el Servicio de Odoo**
@@ -35,7 +36,7 @@ En la parte superior derecha de la página de Render, haremos clic en **"New"** 
 A continuación:
 
 1. Enlazaremos el servicio con el repositorio de **GitHub** que el usuario haya creado previamente, el cual contiene el árbol de directorios mostrado en el apartado anterior.  
-2. Configuraremos el servicio según las preferencias del usuario (nombre, región, etc.).  
+2. Configuraremos el servicio según las preferencias del usuario, en nuestro caso (nombre el que deseemos, language/lenguaje = "docker", región "Frankfurt", "Instance Type" = "Free", etc.).  
 3. Es **muy importante** seleccionar el tipo de lenguaje (**Language**) como **Docker**.  
 4. Finalmente, haremos clic en **"Deploy Web Service"**.
 
@@ -51,7 +52,7 @@ De nuevo, en la parte superior derecha de Render, haremos clic en **"New"** y es
 
 Después:
 
-1. Configuraremos la base de datos según las preferencias del usuario (nombre, región, plan gratuito o de pago, etc.).  
+1. Configuraremos la base de datos según las preferencias del usuario, en nuestro caso, como anteriormente (nombre el que deseemos, language/lenguaje = "docker", región "Frankfurt", "Instance Type" = "Free", etc.).    
 2. Cuando todo esté listo, pulsaremos el botón **"Create Database"**.
 
 Esto creará nuestra base de datos **PostgreSQL**, que será la que Odoo utilizará para almacenar toda la información del sistema.
@@ -59,8 +60,8 @@ Esto creará nuestra base de datos **PostgreSQL**, que será la que Odoo utiliza
 ---
 ## **3. Conexión entre Odoo y la Base de Datos Postgres en Render**
 Una vez creados ambos servicios (el **Web Service** y la **Base de Datos Postgres**), debemos establecer la conexión entre ellos para que Odoo pueda acceder correctamente a la base de datos.
-
 ---
+
 ### **3.1 Obtener las credenciales de la Base de Datos**
 
 1. Accede a tu servicio de **Postgres** en Render.  
@@ -71,6 +72,13 @@ Una vez creados ambos servicios (el **Web Service** y la **Base de Datos Postgre
    - **User**
    - **Password**
    - **Internal Database URL** (opcional, solo de referencia)
+
+Render mostrará también información adicional como:
+- **Internal Database URL**
+- **External Database URL**
+
+> 🔴 **Importante:** 🔴 
+> La **Internal Database URL** es la que deberás usar preferentemente al configurar Odoo, ya que ofrece una conexión interna más rápida y segura entre servicios dentro de Render.
 
 Guarda estos valores, ya que los necesitaremos para configurar las variables de entorno del servicio Odoo.
 
@@ -88,6 +96,10 @@ Guarda estos valores, ya que los necesitaremos para configurar las variables de 
 | `PGUSER`              | `nombre_de_usuario`              | Usuario de la base de datos                  |
 | `PGPASSWORD`          | `contraseña_asignada`            | Contraseña de la base de datos               |
 | `PGDATABASE`          | `nombre_de_tu_bd`                | Nombre de la base de datos                   |
+> 🔴 **Nota:** 🔴
+> Asegúrate de que los nombres de las variables coinciden exactamente con los utilizados en el archivo `Dockerfile`.  
+> Por ejemplo, si en el Dockerfile aparece `$PGHOST`, la variable deberá llamarse **PGHOST** en Render.
+
 
 4. Guarda los cambios y Render reiniciará el servicio automáticamente.
 
@@ -98,9 +110,9 @@ Cuando el servicio Odoo se reinicie:
 ==> Checking/initializing DB <nombre_de_tu_bd>
 ==> Starting Odoo server
 
-> 🔴 **Consejos:**  
+> 🔴 **Consejos:** 🔴
 > Asegúrate de que tanto Odoo como Postgres estén en la misma región dentro de Render para evitar problemas de conexión o latencia.
-- Si hay algún error (por ejemplo, credenciales incorrectas o base de datos inaccesible), Render mostrará mensajes indicando el problema.
+> Si hay algún error (por ejemplo, credenciales incorrectas o base de datos inaccesible), Render mostrará mensajes indicando el problema.
 
 ---
 
@@ -149,6 +161,8 @@ CMD ["bash","-lc", "\
     "installable": True,
 }
 ```
+
+
 
 
 
