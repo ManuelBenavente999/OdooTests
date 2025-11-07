@@ -1,0 +1,13 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Render PostgreSQL",
+      "Group": "Render",
+      "Host": "dpg-d3ts2mur433s73duaopg-a",
+      "Port": 5432,
+      "MaintenanceDB": "postgresdb_h7ws",
+      "Username": "user_postgresdb",
+      "SSLMode": "require"
+    }
+  }
+}
